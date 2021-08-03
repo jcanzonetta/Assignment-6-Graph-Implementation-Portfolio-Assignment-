@@ -89,15 +89,50 @@ class UndirectedGraph:
         Return list of vertices in the graph (any order)
         """
 
+        output_arr = list()
+        for vertex in self.adj_list:
+            output_arr.append(vertex)
+
+        return output_arr
+
     def get_edges(self) -> []:
         """
         Return list of edges in the graph (any order)
         """
 
+        output_arr = list()
+
+        for vertex in self.adj_list:
+            for neighbor in self.adj_list[vertex]:
+                if vertex < neighbor:
+                    temp_tuple = (vertex, neighbor)
+                else:
+                    temp_tuple = (neighbor, vertex)
+
+                if temp_tuple not in output_arr:
+                    output_arr.append(temp_tuple)
+
+        return output_arr
+
     def is_valid_path(self, path: []) -> bool:
         """
         Return true if provided path is valid, False otherwise
         """
+
+        if len(path) == 0:
+            return True
+
+        if path[0] in self.adj_list:
+            prev_vertex = path[0]
+        else:
+            return False
+
+        for i in range(1, len(path)):
+            if path[i] not in self.adj_list[prev_vertex]:
+                return False
+            prev_vertex = path[i]
+
+        return True
 
     def dfs(self, v_start, v_end=None) -> []:
         """
