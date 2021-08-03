@@ -48,20 +48,41 @@ class UndirectedGraph:
         Add new vertex to the graph
         """
 
+        if v not in self.adj_list:
+            self.adj_list[v] = []
+
     def add_edge(self, u: str, v: str) -> None:
         """
         Add edge to the graph
         """
+
+        if u not in self.adj_list:
+            self.add_vertex(u)
+        if v not in self.adj_list:
+            self.add_vertex(v)
+
+        if u not in self.adj_list[v] and v not in self.adj_list[u]:
+            self.adj_list[u].append(v)
+            self.adj_list[v].append(u)
 
     def remove_edge(self, v: str, u: str) -> None:
         """
         Remove edge from the graph
         """
 
+        if u in self.adj_list and v in self.adj_list:
+            if v in self.adj_list[u] and u in self.adj_list[v]:
+                self.adj_list[u].remove(v)
+                self.adj_list[v].remove(u)
+
     def remove_vertex(self, v: str) -> None:
         """
         Remove vertex and all connected edges
         """
+
+        if v in self.adj_list:
+            for neighbor in self.adj_list[v]:
+                self.adj_list[neighbor].remove(v)
 
     def get_vertices(self) -> []:
         """
