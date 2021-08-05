@@ -162,7 +162,7 @@ class UndirectedGraph:
 
         # End the function early if v_start is not a vertex in the graph.
         if v_start not in self.adj_list:
-            return
+            return []
         else:
             visited_verticies = list()
             vertex = v_start
@@ -192,7 +192,7 @@ class UndirectedGraph:
         """
         # End the function early if v_start is not a vertex in the graph.
         if v_start not in self.adj_list:
-            return
+            return []
         else:
             visited_verticies = list()
             vertex = v_start
