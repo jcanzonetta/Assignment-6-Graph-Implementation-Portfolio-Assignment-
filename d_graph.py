@@ -239,9 +239,50 @@ class DirectedGraph:
 
     def has_cycle(self):
         """
-        TODO: Write this implementation
+        Returns True if the graph has at least one cycle and False otherwise.
         """
-        pass
+
+        verticies = self.get_vertices()
+
+        # A graph with less than 3 verticies cannot have a cycle when duplicate edges are
+        # not allowed.
+        if len(verticies) < 3:
+            return False
+
+        for _, start_vertex in enumerate(verticies, 1):
+            # For every starting vertex, we need to track which nodes have already been
+            # processed.
+            visited_connected_verticies = []
+            # The queue tracks which verticies need to be analyzed.
+            queue = deque()
+
+            # Add all verticies which the starting vertex points to to the queue.
+            adjacent_verticies = self.get_adjacent_verticies(
+                start_vertex, False)
+            for neighbor in adjacent_verticies:
+                queue.appendleft(neighbor)
+
+            # As long as their are still verticies to process, process the next vertex.
+            while len(queue) > 0:
+                cur_vertex = queue.pop()
+
+                # If a vertex was added to the queue which is the same index we started with,
+                # a cycle has been completed.
+                if cur_vertex == start_vertex:
+                    return True
+                # When the vertex getting processed is not the starting vertex and hasn't been processed
+                # already, add it to the list of visited verticies and add its connected neighbors which
+                # have not already been processed themselves.
+                elif cur_vertex not in visited_connected_verticies:
+                    visited_connected_verticies.append(cur_vertex)
+
+                    adjacent_verticies = self.get_adjacent_verticies(
+                        cur_vertex, False)
+                    for neighbor in adjacent_verticies:
+                        if neighbor not in visited_connected_verticies:
+                            queue.appendleft(neighbor)
+
+        return False
 
     def dijkstra(self, src: int) -> []:
         """
