@@ -164,27 +164,70 @@ class DirectedGraph:
             # The next vertex analyzed is always the last vertex added to the stack.
             vertex = stack.pop()
 
+            # If the vertex hasn't been visited yet, add it to the visited verticies list and add its neighbors to
+            # the stack.
             if vertex not in visited_vertices:
                 visited_vertices.append(vertex)
 
-                # Sort all of the adjacent verticies of the current vertex in reverse order
-                # since they will be added at the top of the stack from first to last.
-                adjacent_verticies = list()
-                for i, weight in enumerate(self.adj_matrix[vertex]):
-                    if weight > 0:
-                        adjacent_verticies.append(i)
-                adjacent_verticies.sort(reverse=True)
+                adjacent_verticies = self.get_adjacent_verticies(vertex, True)
 
                 for neighbor in adjacent_verticies:
                     stack.append(neighbor)
 
         return visited_vertices
 
+    def get_adjacent_verticies(self, vertex, order):
+        """
+        Sort all of the adjacent verticies of the provided vertex in either ascending (False) or descending (True) order.
+        """
+        adjacent_verticies = list()
+
+        # Add each vertex to the list of adjacent verticies only if it has an edge (weight > 0).
+        for i, weight in enumerate(self.adj_matrix[vertex]):
+            if weight > 0:
+                adjacent_verticies.append(i)
+
+        # Sort the list of verticies in either ascending or descending order.
+        adjacent_verticies.sort(reverse=order)
+
+        return adjacent_verticies
+
     def bfs(self, v_start, v_end=None) -> []:
         """
-        TODO: Write this implementation
+        Takes an initial vertex index and an optional ending vertex index and returns an array of verticies
+        visited during a breadth first search starting at the initial vertex.
+
+        Vertices at each depth are presented provided in ascending order.
         """
-        pass
+
+        # End the function early if v_start is not a vertex in the graph.
+        if v_start < 0 or v_start >= len(self.adj_matrix):
+            return []
+        else:
+            visited_vertices = list()
+            vertex = v_start
+            queue = deque()
+            queue.append(vertex)
+
+        # The queue will only be empty after all connected verticies have been visited.
+        while len(queue) > 0 and vertex != v_end:
+            # The next vertex analyzed is always the oldest vertex in the queue.
+            vertex = queue.pop()
+
+            # Only add the vertex from the queue to the list of visited vertices if it's not already visited.
+            if vertex not in visited_vertices:
+                visited_vertices.append(vertex)
+
+            # Get a list of verticies adjacent to the current vertex in ascending order.
+            adjacent_verticies = self.get_adjacent_verticies(vertex, False)
+
+            # Check if each of the adjacent verticies of the current vertex have already been visited, and if not, add
+            # them to the queue.
+            for neighbor in adjacent_verticies:
+                if neighbor not in visited_vertices:
+                    queue.appendleft(neighbor)
+
+        return visited_vertices
 
     def has_cycle(self):
         """
