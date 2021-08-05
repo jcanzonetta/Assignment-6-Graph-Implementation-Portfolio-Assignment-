@@ -183,6 +183,10 @@ class UndirectedGraph:
                 for neighbor in sorted_neighbors:
                     stack.append(neighbor)
 
+        # Edge case check when v_start == v_end.
+        if vertex == v_end and vertex not in visited_verticies:
+            visited_verticies.append(vertex)
+
         return visited_verticies
 
     def bfs(self, v_start, v_end=None) -> []:
@@ -215,6 +219,10 @@ class UndirectedGraph:
                     # Only add the neighbor to the queue if it's not already visited. If it is already
                     # visited, then the depth at this point is greater and is ignored.
                     queue.appendleft(neighbor)
+
+        # Edge case check when v_start == v_end.
+        if vertex == v_end and vertex not in visited_verticies:
+            visited_verticies.append(vertex)
 
         return visited_verticies
 

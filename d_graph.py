@@ -155,7 +155,7 @@ class DirectedGraph:
         if v_start < 0 or v_start >= len(self.adj_matrix):
             return []
         else:
-            visited_vertices = list()
+            visited_verticies = list()
             vertex = v_start
             stack = deque()
             stack.append(vertex)
@@ -166,15 +166,19 @@ class DirectedGraph:
 
             # If the vertex hasn't been visited yet, add it to the visited verticies list and add its neighbors to
             # the stack.
-            if vertex not in visited_vertices:
-                visited_vertices.append(vertex)
+            if vertex not in visited_verticies:
+                visited_verticies.append(vertex)
 
                 adjacent_verticies = self.get_adjacent_verticies(vertex, True)
 
                 for neighbor in adjacent_verticies:
                     stack.append(neighbor)
 
-        return visited_vertices
+        # Edge case check when v_start == v_end.
+        if vertex == v_end and vertex not in visited_verticies:
+            visited_verticies.append(vertex)
+
+        return visited_verticies
 
     def get_adjacent_verticies(self, vertex, order):
         """
@@ -204,7 +208,7 @@ class DirectedGraph:
         if v_start < 0 or v_start >= len(self.adj_matrix):
             return []
         else:
-            visited_vertices = list()
+            visited_verticies = list()
             vertex = v_start
             queue = deque()
             queue.append(vertex)
@@ -215,8 +219,8 @@ class DirectedGraph:
             vertex = queue.pop()
 
             # Only add the vertex from the queue to the list of visited vertices if it's not already visited.
-            if vertex not in visited_vertices:
-                visited_vertices.append(vertex)
+            if vertex not in visited_verticies:
+                visited_verticies.append(vertex)
 
             # Get a list of verticies adjacent to the current vertex in ascending order.
             adjacent_verticies = self.get_adjacent_verticies(vertex, False)
@@ -224,10 +228,14 @@ class DirectedGraph:
             # Check if each of the adjacent verticies of the current vertex have already been visited, and if not, add
             # them to the queue.
             for neighbor in adjacent_verticies:
-                if neighbor not in visited_vertices:
+                if neighbor not in visited_verticies:
                     queue.appendleft(neighbor)
 
-        return visited_vertices
+        # Edge case check when v_start == v_end.
+        if vertex == v_end and vertex not in visited_verticies:
+            visited_verticies.append(vertex)
+
+        return visited_verticies
 
     def has_cycle(self):
         """
