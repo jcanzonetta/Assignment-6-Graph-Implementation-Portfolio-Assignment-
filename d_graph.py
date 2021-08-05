@@ -3,6 +3,9 @@
 # Assignment:   6 Part 2
 # Description:  Implementation of a DirectedGraph class.
 
+from collections import deque
+
+
 class DirectedGraph:
     """
     Class to implement directed weighted graph
@@ -52,7 +55,7 @@ class DirectedGraph:
 
     def add_vertex(self) -> int:
         """
-        TODO: Write this implementation
+        Adds a new vertex to the graph.
         """
         self.v_count += 1
 
@@ -67,7 +70,10 @@ class DirectedGraph:
 
     def add_edge(self, src: int, dst: int, weight=1) -> None:
         """
-        TODO: Write this implementation
+        Takes two integers and adds an edge from the first vertex to the second. If the third optional
+        parameter is not provided, the weight is set as 1.
+
+        Both vertices must be already a part of the graph and loops are not allowed.
         """
         # Check that the input is valid.
         if src >= self.v_count or src < 0 or dst >= self.v_count or dst < 0 or src == dst or weight < 1:
@@ -77,7 +83,7 @@ class DirectedGraph:
 
     def remove_edge(self, src: int, dst: int) -> None:
         """
-        TODO: Write this implementation
+        Takes two integers and removes the edge from the first vertex to the second.
         """
         # Check that the input is valid.
         if src >= self.v_count or src < 0 or dst >= self.v_count or dst < 0 or src == dst:
@@ -87,7 +93,7 @@ class DirectedGraph:
 
     def get_vertices(self) -> []:
         """
-        TODO: Write this implementation
+        Returns an array containing all of the vertices in the graph.
         """
         output_arr = list()
         for i in range(self.v_count):
@@ -97,10 +103,14 @@ class DirectedGraph:
 
     def get_edges(self) -> []:
         """
-        TODO: Write this implementation
+        Returns an array containing all of the edges in the graph.
+
+        Each edge is provided as a tuple of two incident vertex indices and weight.
         """
         output_arr = list()
+        # src is the vertex indicie of the source vertex in each iteration.
         for src, src_arr in enumerate(self.adj_matrix):
+            # dst is the vertex indicie of the destination vertex in each iteration.
             for dst, dst_weight in enumerate(src_arr):
                 if dst_weight != 0:
                     output_arr.append((src, dst, dst_weight))
@@ -109,15 +119,66 @@ class DirectedGraph:
 
     def is_valid_path(self, path: []) -> bool:
         """
-        TODO: Write this implementation
+        Takes an array of vertex indices and returns True if the path is valid and False otherwise.
         """
-        pass
+        # If the array provided is an empty array, the path is valid.
+        if not path:
+            return True
+
+        # Check if the first vertex in the path is valid.
+        if path[0] < len(self.adj_matrix) and path[0] >= 0:
+            prev_vertex = path[0]
+        else:
+            return False
+
+        # Check if the next vertex in the path is connected to the previous vertex analyzed.
+        for i in range(1, len(path)):
+            # If the next vertex is not a valid vertex, or there is not an edge connecting it to the
+            # previous vertex, return False. Otherwise continue to the next vertex in the path.
+            if path[i] >= len(self.adj_matrix) or path[i] < 0 or self.adj_matrix[prev_vertex][path[i]] <= 0:
+                return False
+
+            prev_vertex = path[i]
+
+        return True
 
     def dfs(self, v_start, v_end=None) -> []:
         """
-        TODO: Write this implementation
+        Takes an initial vertex index and an optional ending vertex index and returns an array of verticies
+        visited during a depth first search starting at the initial vertex.
+
+        When multiple vertices are incident to the currently visited index, the next index visited will be the
+        in ascending order.
         """
-        pass
+
+        # End the function early if v_start is not a vertex in the graph.
+        if v_start < 0 or v_start >= len(self.adj_matrix):
+            return []
+        else:
+            visited_vertices = list()
+            vertex = v_start
+            stack = deque()
+            stack.append(vertex)
+
+        while len(stack) > 0 and vertex != v_end:
+            # The next vertex analyzed is always the last vertex added to the stack.
+            vertex = stack.pop()
+
+            if vertex not in visited_vertices:
+                visited_vertices.append(vertex)
+
+                # Sort all of the adjacent verticies of the current vertex in reverse order
+                # since they will be added at the top of the stack from first to last.
+                adjacent_verticies = list()
+                for i, weight in enumerate(self.adj_matrix[vertex]):
+                    if weight > 0:
+                        adjacent_verticies.append(i)
+                adjacent_verticies.sort(reverse=True)
+
+                for neighbor in adjacent_verticies:
+                    stack.append(neighbor)
+
+        return visited_vertices
 
     def bfs(self, v_start, v_end=None) -> []:
         """
