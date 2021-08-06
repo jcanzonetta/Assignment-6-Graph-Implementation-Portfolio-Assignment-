@@ -4,6 +4,7 @@
 # Description:  Implementation of a DirectedGraph class.
 
 from collections import deque
+import heapq
 
 
 class DirectedGraph:
@@ -286,9 +287,46 @@ class DirectedGraph:
 
     def dijkstra(self, src: int) -> []:
         """
-        TODO: Write this implementation
+        Uses the dijkstra algorithm to find the length of the shortest path from a given vertex (src)
+        to all other verticies in the graph. If there is no path to a vertex, the distance to that
+        vertex will be given as infinity.
         """
-        pass
+
+        visited_verticies = dict()
+        priority_queue = []
+        # Add the source vertex to the priority queue as a tuple (distance, vertex).
+        heapq.heappush(priority_queue, (0, src))
+
+        # While there are elements in the priority q, not all connected verticies have been processed.
+        while priority_queue:
+            # The next vertex processed is always the vertex with the lowest distance in the queue.
+            vertex = heapq.heappop(priority_queue)
+            distance = vertex[0]
+
+            # If the vertex being processed isn't in the visited_verticies array, then the distance from
+            # src is the lowest it can be, as all other verticies in the queue have a greater weight.
+            if vertex[1] not in visited_verticies:
+                visited_verticies[vertex[1]] = distance
+
+                # Determine all the adjacent verticies of the current vertx.
+                adjacent_verticies = self.get_adjacent_verticies(
+                    vertex[1], False)
+
+                # Add the tuple of (path weight, neighboring vertex) for each neighbor.
+                for neighbor in adjacent_verticies:
+                    neighbor_distance = self.adj_matrix[vertex[1]][neighbor]
+                    heapq.heappush(
+                        priority_queue, (distance + neighbor_distance, neighbor))
+
+        # Convert the dictionary of vertex: path distance pairs to an array fitting the specifications.
+        output_arr = []
+        for i in range(len(self.get_vertices())):
+            try:
+                output_arr.append(visited_verticies[i])
+            except KeyError:
+                output_arr.append(float('inf'))
+
+        return output_arr
 
 
 if __name__ == '__main__':
